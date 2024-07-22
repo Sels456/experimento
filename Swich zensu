@@ -4,7 +4,7 @@ setDefaultTab("Main")
 g_ui.loadUIFromString([[
 ConfigWindow < MainWindow
   text: senzu
-  size: 100 120
+  size: 100 150
 
   HorizontalSeparator
     id: separator
