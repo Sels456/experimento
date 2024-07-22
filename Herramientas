@@ -164,6 +164,9 @@ onAddThing(function(tile, thing)
     end
 end)
 
+local Spe = macro(10000, "speed", function()
+  say('super speed')
+end)
 
 table.insert(listaMacros, Ene)
 table.insert(listaMacros, Hol)
@@ -172,6 +175,7 @@ table.insert(listaMacros, Pow)
 table.insert(listaMacros, Bug)
 table.insert(listaMacros, TH)
 table.insert(listaMacros, sprh)
+table.insert(listaMacros, Spe)
 
 local checkboxes = {}
 
