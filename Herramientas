@@ -1,0 +1,242 @@
+-- size es ancho alto
+setDefaultTab("Main")
+
+g_ui.loadUIFromString([[
+ConfigWindow < MainWindow
+  text: HERRAMIEMTAS
+  size: 100 200
+
+  HorizontalSeparator
+    id: separator
+    anchors.right: parent.right
+    anchors.left: parent.left
+    anchors.bottom: closeButton.top
+    margin-bottom: 6
+
+  Panel
+    id: lista
+    anchors.fill: parent
+    anchors.bottom: closeButton.top
+    layout:
+      type: grid
+      cell-size: 110 15
+      cell-spacing: 2
+
+  Button
+    id: closeButton
+    text: Cerrar
+    font: cipsoftFont
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    size: 45 21
+]])
+
+local panelName = "configMacro"
+if not storage[panelName] then
+  storage[panelName] = {
+    enabled = false,
+  }
+end
+
+local config = storage[panelName]
+
+local rootWidget = g_ui.getRootWidget()
+local configWindow
+
+configWindow = UI.createWindow('ConfigWindow', rootWidget)
+configWindow:hide()
+
+local listaMacros = {}
+
+local Ene = macro(1, "Enemy", function()
+for _,pla in ipairs(getSpectators(posz())) do
+attacked = g_game.getAttackingCreature()
+  if (not attacked or (attacked and (not attacked:isPlayer() or (pla:getHealthPercent() < attacked:getHealthPercent())))) and pla:isPlayer() and pla:getEmblem() ~= 1 then 
+   g_game.attack(pla)
+  end
+end
+end) 
+
+local Hol = macro(100, "Hold", nil, function()
+  if g_game.isAttacking() 
+then
+ oldTarget = g_game.getAttackingCreature()
+  end
+  if (oldTarget and oldTarget:getPosition()) 
+then
+ if (not g_game.isAttacking() and getDistanceBetween(pos(), oldTarget:getPosition()) <= 8) then
+
+if (oldTarget:getPosition().z == posz()) then
+        g_game.attack(oldTarget)
+      end
+    end
+  end
+end)
+
+local Atk = macro(1, "Attack", "", function() 
+  local battlelist = getSpectators();
+  local closest = 10
+  local lowesthpc = 101
+  for key, val in pairs(battlelist) do
+    if val:isMonster() then
+      if getDistanceBetween(player:getPosition(), val:getPosition()) <= closest then
+        closest = getDistanceBetween(player:getPosition(), val:getPosition())
+        if val:getHealthPercent() < lowesthpc then
+          lowesthpc = val:getHealthPercent()
+        end
+      end
+    end
+  end
+  for key, val in pairs(battlelist) do
+    if val:isMonster() then
+      if getDistanceBetween(player:getPosition(), val:getPosition()) <= closest then
+        if g_game.getAttackingCreature() ~= val and val:getHealthPercent() <= lowesthpc then 
+          g_game.attack(val)
+     delay(100)
+          break
+        end
+      end
+    end
+  end
+end)
+
+local Pow = macro(100, "Treinar", function()
+if (manapercent() >= 20) then 
+say('PowerDown')
+end
+end)
+
+
+local bugMapMobile = {};
+
+local cursorWidget = g_ui.getRootWidget():recursiveGetChildById('pointer');
+
+local initialPos = { x = cursorWidget:getPosition().x / cursorWidget:getWidth(), y = cursorWidget:getPosition().y / cursorWidget:getHeight() };
+
+local availableKeys = {
+    ['Up'] = { 0, -6 },
+    ['Down'] = { 0, 6 },
+    ['Left'] = { -7, 0 },
+    ['Right'] = { 7, 0 }
+};
+
+function bugMapMobile.logic()
+    local pos = pos();
+    local keypadPos = { x = cursorWidget:getPosition().x / cursorWidget:getWidth(), y = cursorWidget:getPosition().y / cursorWidget:getHeight() };
+    local diffPos = { x = initialPos.x - keypadPos.x, y = initialPos.y - keypadPos.y };
+
+    if (diffPos.y < 0.46 and diffPos.y > -0.46) then
+        if (diffPos.x > 0) then
+            pos.x = pos.x + availableKeys['Left'][1];
+        elseif (diffPos.x < 0) then
+            pos.x = pos.x + availableKeys['Right'][1];
+        else return end
+    elseif (diffPos.x < 0.46 and diffPos.x > -0.46) then
+        if (diffPos.y > 0) then
+            pos.y = pos.y + availableKeys['Up'][2];
+        elseif (diffPos.y < 0) then
+            pos.y = pos.y + availableKeys['Down'][2];
+        else return; end
+    end
+    local tile = g_map.getTile(pos);
+    if (not tile) then return; end
+
+    g_game.use(tile:getTopUseThing());
+end
+
+local Bug = macro(1, "Bug Map", bugMapMobile.logic);
+
+
+local TH = macro(100, "Msg", function() end)
+onStaticText(function(thing, text)
+    if TH.isOff() then return end
+    if not text:find('says:') then
+        g_map.cleanTexts()
+    end
+end)
+
+--[[Esconder MAGIAS(SPRITES)]]--
+local sprh = macro(100, "Sprite", function() end)
+onAddThing(function(tile, thing)
+    if sprh.isOff() then return end
+    if thing:isEffect() then
+        thing:hide()
+    end
+end)
+
+
+table.insert(listaMacros, Ene)
+table.insert(listaMacros, Hol)
+table.insert(listaMacros, Atk)
+table.insert(listaMacros, Pow)
+table.insert(listaMacros, Bug)
+table.insert(listaMacros, TH)
+table.insert(listaMacros, sprh)
+
+local checkboxes = {}
+
+for _, mac in ipairs(listaMacros) do
+    local checkbox = g_ui.createWidget("CheckBox", configWindow.lista)
+    checkbox:setText(mac.switch:getText())
+    checkbox.onCheckChange = function(wid, isChecked)
+        mac.setOn(isChecked and config.enabled)
+    end
+    checkbox:setChecked(mac.isOn())
+    mac.switch:setVisible(false)
+    table.insert(checkboxes, checkbox)
+end
+
+configWindow.closeButton.onClick = function(widget)
+    configWindow:hide()
+end
+
+UI.SwitchAndButton({on = config.enabled, left = "HERRAMIENTAS", right = "MENU"}, function(widget)
+    config.enabled = not config.enabled
+    for i, mac in ipairs(listaMacros) do
+        mac.setOn(config.enabled and checkboxes[i]:isChecked())
+    end
+end, function()
+    configWindow:show()
+    configWindow:raise()
+    configWindow:focus()
+end)
+
+local ui = setupUI([[
+Panel
+  height: 120
+  width: 100
+  anchors.left: parent.left
+  anchors.top: parent.top
+  margin-left: 3
+
+  Label
+    id: label1
+    margin-top: 50
+    font: verdana-11px-rounded
+    anchors.top: parent.top
+    anchors.left: parent.left
+    width: 240     
+]], modules.game_interface.getMapPanel())    
+
+-- Colores estilo arcoíris brillantes en formato hexadecimal
+local cores = {
+  "#FF0000", -- Rojo
+  "#FF7F00", -- Naranja
+  "#FFFF00", -- Amarillo
+  "#00FF00", -- Verde
+  "#0000FF", -- Azul
+  "#4B0082", -- Índigo
+  "#8B00FF", -- Violeta
+  "#FF1493", -- Rosa brillante
+  "#00FFFF", -- Cian
+  "#FFD700"  -- Dorado
+}
+
+macro(150, function()
+  local cor1, cor2, cor3, cor4 = cores[math.random(#cores)], cores[math.random(#cores)], cores[math.random(#cores)], cores[math.random(#cores)]
+  ui.label1:setColoredText({"BOT ", cor1, "EXCLUSIVE ", cor2, "NDBO-WAR ", cor3, "BY:XxLuCaSxX", cor4})
+end)
+
+-- Mueve el panel de UI a la posición deseada
+ui:breakAnchors() -- Rompe las restricciones de posición actuales del panel
+ui:move(260 ,30) -- Mueve el panel a la posición
