@@ -1,3 +1,5 @@
+setDefaultTab("tools")
+
 local cityTravelUI = setupUI([[
 Panel
   height: 19
