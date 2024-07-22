@@ -97,14 +97,14 @@ local macroAngs = macro(1, "Regen+", function()
     end
 end)
 
-local macroInm = macro(120000, "Inmortal", function()
-  if hppercent() <= 15 then
+local macroInm = macro(120200, "Inmortal", function()
+  if hppercent() <= 40 then
    say('immortal mode')
   end
 end)
 
-local macroSup = macro(180000, "Supervive", function()
-  if hppercent() <= 10 then
+local macroSup = macro(180200, "Supervive", function()
+  if hppercent() <= 15 then
    say('supervive')
   end
 end)
