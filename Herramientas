@@ -4,7 +4,7 @@ setDefaultTab("Main")
 g_ui.loadUIFromString([[
 ConfigWindow < MainWindow
   text: HERRAMIEMTAS
-  size: 100 220
+  size: 100 240
 
   HorizontalSeparator
     id: separator
@@ -49,14 +49,14 @@ configWindow:hide()
 local listaMacros = {}
 
 local bless = false
-local Bless = macro(1000, "Auto Bless", function()
+local Bless = macro(1000, "!Bless", function()
     if bless ~= true then
         bless = true
       say("!bless")
     end
 end)
 
-local Bol = macro(1000, "Auto !bol", function()
+local Bol = macro(1000, "!Bol", function()
   if not getFinger() then
       say('!bol')
   end
