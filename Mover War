@@ -1,5 +1,23 @@
 setDefaultTab("tools")
 
+local name = UI.Label("--[[VIAJAR]]--")
+
+-- Define una macro que se ejecuta cada 800 milisegundos
+macro(800, function()
+  local rainbowDelay = 0 -- Inicializa el retraso del arco iris
+
+  -- Itera sobre una lista de colores
+  for k, color in ipairs({"#f56e6e", "#f5d864", "#96f76d", "#6a90f7", "#f783cf", "#d683f7"}) do
+    -- Programa una función que cambia el color de la etiqueta después de un retraso
+    schedule(rainbowDelay, function()
+      name:setColor(color) -- Establece el color de la etiqueta
+    end)
+
+    -- Incrementa el retraso para el próximo color
+    rainbowDelay = rainbowDelay + 100 -- Tiempo entre colores
+  end
+end, SpellsTab)
+
 local cityTravelUI = setupUI([[
 Panel
   height: 19
