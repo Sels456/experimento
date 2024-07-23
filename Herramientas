@@ -49,6 +49,14 @@ configWindow:hide()
 local listaMacros = {}
 
 local bless = false
+local Pot = macro(1000, "PotBless", function()
+    if bless ~= true then
+        bless = true
+      usewith(13052, player)
+    end
+end)
+
+local bless = false
 local Bless = macro(1000, "!Bless", function()
     if bless ~= true then
         bless = true
@@ -182,6 +190,7 @@ local Spe = macro(60100, "speed", function()
   say('super speed')
 end)
 
+table.insert(listaMacros, Pot)
 table.insert(listaMacros, Bless)
 table.insert(listaMacros, Bol)
 table.insert(listaMacros, Ene)
