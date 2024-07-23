@@ -68,13 +68,13 @@ local Div = macro(300, "Missile", function()
     end
 end)
 		
-local Attack = macro(600, "ShakaCon", function()
+local Attack = macro(600, "MaxAttk", function()
     if g_game.isAttacking() then
         say("max super attack")
     end
 end)
 
-local Destruc = macro(800, "ShakaDes", function()
+local Destruc = macro(800, "MaxDest", function()
     if g_game.isAttacking() then
         say("max super destruction")
     end
