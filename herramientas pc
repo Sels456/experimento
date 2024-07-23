@@ -145,7 +145,7 @@ onAddThing(function(tile, thing)
     end
 end)
 
-local Spe = macro(10000, "speed", function()
+local Spe = macro(60100, "speed", function()
   say('super speed')
 end)
 
