@@ -4,7 +4,7 @@ setDefaultTab("Main")
 g_ui.loadUIFromString([[
 ConfigWindow < MainWindow
   text: HERRAMIEMTAS
-  size: 100 240
+  size: 100 260
 
   HorizontalSeparator
     id: separator
