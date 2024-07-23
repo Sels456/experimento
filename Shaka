@@ -1,0 +1,149 @@
+-- size es ancho alto
+setDefaultTab("Main")
+
+
+
+g_ui.loadUIFromString([[
+ConfigWindow < MainWindow
+  text: SHAKA
+  size: 100 250
+
+  HorizontalSeparator
+    id: separator
+    anchors.right: parent.right
+    anchors.left: parent.left
+    anchors.bottom: closeButton.top
+    margin-bottom: 6
+
+  Panel
+    id: lista
+    anchors.fill: parent
+    anchors.bottom: closeButton.top
+    layout:
+      type: grid
+      cell-size: 110 15
+      cell-spacing: 2
+
+  Button
+    id: closeButton
+    text: Cerrar
+    font: cipsoftFont
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    size: 45 21
+]])
+
+local panelName = "configMacro"
+if not storage[panelName] then
+  storage[panelName] = {
+    enabled = false,
+  }
+end
+
+local config = storage[panelName]
+
+local rootWidget = g_ui.getRootWidget()
+local configWindow
+
+configWindow = UI.createWindow('ConfigWindow', rootWidget)
+configWindow:hide()
+
+local listaMacros = {}
+
+local Com = macro(150, "Muted", function()
+    if g_game.isAttacking() then
+        say("muted")
+    end
+end)
+
+local Agoni = macro(100, "Agoni", function()
+    if g_game.isAttacking() then
+        say("Agonimos")
+    end
+end)
+
+local Div = macro(300, "Missile", function()
+    if g_game.isAttacking() then
+        say("divine missile")
+    end
+end)
+		
+local Attack = macro(600, "ShakaCon", function()
+    if g_game.isAttacking() then
+        say("shaka condenser")
+    end
+end)
+
+local Destruc = macro(800, "ShakaDes", function()
+    if g_game.isAttacking() then
+        say("shaka destruction")
+    end
+end)
+
+local macroAng = macro(9000, "Buff", function()
+  say('shaka power up')
+end)
+
+
+local macroAngs = macro(1, "Regen+", function()
+    if hppercent() <= 78 and manapercent() > 10 and not hasManaShield() then
+        say("MYSTIC DEFENSE")
+    elseif hasManaShield() and (hppercent() >= 20 or manapercent() < 90) then
+        say("MYSTIC KAI")
+    else
+        if hppercent() <= 90 then
+            say("shaka regeneration")
+        end
+    end
+end)
+
+local macroInm = macro(120000, "Inmortal", function()
+  if hppercent() <= 15 then
+   say('immortal mode')
+  end
+end)
+
+local macroSup = macro(180000, "Supervive", function()
+  if hppercent() <= 10 then
+   say('supervive')
+  end
+end)
+
+table.insert(listaMacros, Com)
+table.insert(listaMacros, Agoni)
+table.insert(listaMacros, Div)
+table.insert(listaMacros, Attack)
+table.insert(listaMacros, Destruc)
+table.insert(listaMacros, macroAng)
+table.insert(listaMacros, macroAngs)
+table.insert(listaMacros, macroInm)
+table.insert(listaMacros, macroSup)
+
+local checkboxes = {}
+
+for _, mac in ipairs(listaMacros) do
+    local checkbox = g_ui.createWidget("CheckBox", configWindow.lista)
+    checkbox:setText(mac.switch:getText())
+    checkbox.onCheckChange = function(wid, isChecked)
+        mac.setOn(isChecked and config.enabled)
+    end
+    checkbox:setChecked(mac.isOn())
+    mac.switch:setVisible(false)
+    table.insert(checkboxes, checkbox)
+end
+
+configWindow.closeButton.onClick = function(widget)
+    configWindow:hide()
+end
+
+UI.SwitchAndButton({on = config.enabled, left = "SUPER SPELL", right = "MENU"}, function(widget)
+    config.enabled = not config.enabled
+    for i, mac in ipairs(listaMacros) do
+        mac.setOn(config.enabled and checkboxes[i]:isChecked())
+    end
+end, function()
+    configWindow:show()
+    configWindow:raise()
+    configWindow:focus()
+end)
+    
