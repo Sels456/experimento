@@ -48,6 +48,20 @@ configWindow:hide()
 
 local listaMacros = {}
 
+local bless = false
+local Bless = macro(1000, "Auto Bless", function()
+    if bless ~= true then
+        bless = true
+      say("!bless")
+    end
+end)
+
+local Bol = macro(1000, "Auto !bol", function()
+  if not getFinger() then
+      say('!bol')
+  end
+end)
+
 local Ene = macro(1, "Enemy", function()
 for _,pla in ipairs(getSpectators(posz())) do
 attacked = g_game.getAttackingCreature()
@@ -168,6 +182,8 @@ local Spe = macro(60100, "speed", function()
   say('super speed')
 end)
 
+table.insert(listaMacros, Bless)
+table.insert(listaMacros, Bol)
 table.insert(listaMacros, Ene)
 table.insert(listaMacros, Hol)
 table.insert(listaMacros, Atk)
