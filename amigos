@@ -1,3 +1,4 @@
+setDefaultTab("tools")
 -- Crea una etiqueta de UI con el texto 
 local name = UI.Label("--[[FRIENDS]]--")
 
