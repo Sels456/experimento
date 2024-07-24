@@ -1,4 +1,3 @@
--- size es ancho alto
 setDefaultTab("Main")
 
 g_ui.loadUIFromString([[
