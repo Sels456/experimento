@@ -67,6 +67,12 @@ local Ray= macro(1, 'RAYMOND', function()
    end
 end)
 
+local Ray= macro(1, 'STAR', function()
+  if hppercent() <= 98 or manapercent() <= 98 then
+   usewith(13617, player)
+   end
+end)
+
 table.insert(listaMacros, Exo)
 table.insert(listaMacros, Ten)
 table.insert(listaMacros, Ray)
