@@ -148,7 +148,6 @@ local Bug = macro(1, 'Bug Map', function()
  end
 end)
 
-
 local TH = macro(100, "Msg", function() end)
 onStaticText(function(thing, text)
     if TH.isOff() then return end
