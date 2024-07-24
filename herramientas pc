@@ -248,4 +248,4 @@ end)
 
 -- Mueve el panel de UI a la posición deseada
 ui:breakAnchors() -- Rompe las restricciones de posición actuales del panel
-ui:move(260 ,30) -- Mueve el panel a la posición
+ui:move(260 ,10) -- Mueve el panel a la posición
