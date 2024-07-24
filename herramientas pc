@@ -68,6 +68,7 @@ local Bol = macro(1000, "!Bol", function()
       say('!bol')
   end
 end)
+
 local Ene = macro(1, "Enemy", function()
 for _,pla in ipairs(getSpectators(posz())) do
 attacked = g_game.getAttackingCreature()
