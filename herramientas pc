@@ -126,25 +126,49 @@ say('PowerDown')
 end
 end)
 
-consoleModule = modules.game_console
-local Bug = macro(1, 'Bug Map', function() 
- if modules.corelib.g_keyboard.isKeyPressed('w') and not consoleModule:isChatEnabled() then
-  checkPos(0, -5)
- elseif modules.corelib.g_keyboard.isKeyPressed('e') and not consoleModule:isChatEnabled() then
-  checkPos(3, -3)
- elseif modules.corelib.g_keyboard.isKeyPressed('d') and not consoleModule:isChatEnabled() then
-  checkPos(5, 0)
- elseif modules.corelib.g_keyboard.isKeyPressed('c') and not consoleModule:isChatEnabled() then
-  checkPos(3, 3)
- elseif modules.corelib.g_keyboard.isKeyPressed('s') and not consoleModule:isChatEnabled() then
-  checkPos(0, 5)
- elseif modules.corelib.g_keyboard.isKeyPressed('z') and not consoleModule:isChatEnabled() then
-  checkPos(-3, 3)
- elseif modules.corelib.g_keyboard.isKeyPressed('a') and not consoleModule:isChatEnabled() then
-  checkPos(-5, 0)
- elseif modules.corelib.g_keyboard.isKeyPressed('q') and not consoleModule:isChatEnabled() then
-  checkPos(-3, -3)
- end
+local reflectSpell = 'reflect' -- spell de reflect
+local reflectCooldown = 2 -- em segundos
+
+-- não altere abaixo.
+--------------------------
+
+function getFirstNumberInText(text)
+    local n = nil
+    if string.match(text, "%d+") then n = tonumber(string.match(text, "%d+")) end
+    return n
+end
+
+local Reflect = {}
+local hasReflect = true
+local countDamage = 0
+local Reflect.macro = macro(100, "Reflect", function()
+    if not hasReflect and (not Reflect.cdW or Reflect.cdW <= os.time()) then
+        say(reflectSpell)
+    end
+end)
+
+--00:19 You lose 4821 hitpoints due to an attack by sound shinobi.
+onTextMessage(function(mode, text)
+    if Reflect.macro.isOff() then 
+        return
+    end
+    if not text:lower():find('you lose') then 
+        return
+    end
+    countDamage = getFirstNumberInText(text)
+    if countDamage > 50 and (not Reflect.timeReset or Reflect.timeReset <= os.time()) then
+        hasReflect = false
+        Reflect.timeReset = os.time() + 1
+    end
+end)
+
+onTalk(function(name, level, mode, text, channelId, pos)
+    if Reflect.macro.isOff() then return; end
+    if name ~= player:getName() then return; end
+    if text:lower() == reflectSpell then
+        Reflect.cdW = os.time() + reflectCooldown
+        hasReflect = true
+    end
 end)
 
 local TH = macro(100, "Msg", function() end)
@@ -175,7 +199,7 @@ table.insert(listaMacros, Ene)
 table.insert(listaMacros, Hol)
 table.insert(listaMacros, Atk)
 table.insert(listaMacros, Pow)
-table.insert(listaMacros, Bug)
+table.insert(listaMacros, Reflect.macro)
 table.insert(listaMacros, TH)
 table.insert(listaMacros, sprh)
 table.insert(listaMacros, Spe)
