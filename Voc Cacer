@@ -1,8 +1,11 @@
+-- size es ancho alto
 setDefaultTab("Main")
+
+
 
 g_ui.loadUIFromString([[
 ConfigWindow < MainWindow
-  text: DEATH MASK
+  text: SPIDERMAN
   size: 100 250
 
   HorizontalSeparator
@@ -89,9 +92,9 @@ end)
 
 
 local macroAngs = macro(1, "Regen+", function()
-    if hppercent() <= 90 and manapercent() > 10 and not hasManaShield() then
+    if hppercent() <= 78 and manapercent() > 10 and not hasManaShield() then
         say("MYSTIC DEFENSE")
-    elseif hasManaShield() and (hppercent() >= 20 or manapercent() < 95) then
+    elseif hasManaShield() and (hppercent() >= 20 or manapercent() < 90) then
         say("MYSTIC KAI")
     else
         if hppercent() <= 90 then
@@ -140,7 +143,7 @@ configWindow.closeButton.onClick = function(widget)
     configWindow:hide()
 end
 
-UI.SwitchAndButton({on = config.enabled, left = "CANCER SPELL", right = "MENU"}, function(widget)
+UI.SwitchAndButton({on = config.enabled, left = "SPIDER SPELL", right = "MENU"}, function(widget)
     config.enabled = not config.enabled
     for i, mac in ipairs(listaMacros) do
         mac.setOn(config.enabled and checkboxes[i]:isChecked())
