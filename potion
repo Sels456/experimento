@@ -1,0 +1,8 @@
+
+local bless = false
+local Pot = macro(1000, "PotBless", function()
+    if bless ~= true then
+        bless = true
+      usewith(13052, player)
+    end
+end)
